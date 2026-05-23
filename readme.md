@@ -1,23 +1,35 @@
+# 批量文件处理工具
 
-## 模块说明
+一个基于 Python 的批量文件处理工具，提供批量重命名和批量图片缩放两大功能，支持多线程/多进程并行处理。
 
-| 模块 | 并行方式 | 说明 |
-|------|---------|------|
-| `rename.py` | `ThreadPoolExecutor`（多线程） | 重命名是 I/O 密集型操作，适合多线程 |
-| `resize.py` | `multiprocessing.Pool`（多进程） | 图片处理是 CPU 密集型操作，适合多进程 |
+## 功能特性
 
-## 打包为 EXE
-建议直接从Release下载zip文件，避免手动打包。
+- **批量重命名**：将文件夹内所有文件按数字序号统一重命名（如 `001.png`、`002.jpg`），支持自定义起始编号
+- **批量图片缩放**：将文件夹内所有图片等比例缩放至目标宽高范围内，不拉伸变形，自动创建输出子目录
 
-可使用 PyInstaller 将主程序打包为独立的 exe 文件：
+## 环境要求
+
+- Python 3.8+
+- 依赖库：
+  - Pillow（图片处理）
+
+## 安装
 
 ```bash
-pip install pyinstaller
-pyinstaller --onefile --console main.py
+# 创建虚拟环境（推荐）
+python -m venv venv
+venv\Scripts\activate
+
+# 安装依赖
+pip install Pillow
 ```
 
-生成的可执行文件位于 `dist/` 目录下。
+## 使用方法
 
-## 许可证
+### 主程序入口
 
-本项目基于 [MIT License](LICENSE) 开源。
+运行 `main.py` 进入交互式菜单：
+
+```bash
+python main.py
+```
