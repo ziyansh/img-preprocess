@@ -13,12 +13,6 @@
 - 依赖库：
   - Pillow（图片处理）
 
-## 安装
-
-```bash
-# 创建虚拟环境（推荐）
-python -m venv venv
-venv\Scripts\activate
 
 # 安装依赖
 pip install Pillow

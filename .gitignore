@@ -3,3 +3,5 @@ build/
 dist/
 main.spec
 img preprocess/
+Release/
+*.zip
