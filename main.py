@@ -7,7 +7,7 @@ import sys
 # 关键：PyInstaller 打包后，所有模块都在 exe 内部，不需要再检查外部文件
 # 所以我们直接导入，去掉“文件存在性检查”的逻辑
 from rename import batch_rename
-from resize import batch_scale_images
+from resize import batch_scale_images, batch_scale_and_pad_images
 
 def clear_screen():
     """清空终端屏幕，适配不同系统"""
@@ -21,6 +21,7 @@ def show_menu():
     print("=" * 40)
     print("【1】批量重命名文件（数字序号）")
     print("【2】批量缩放图片（等比例）")
+    print("【3】批量缩放+补边（等比例放大 + 白边/透明背景填充）")
     print("【0】退出程序")
     print("=" * 40)
 
@@ -28,7 +29,7 @@ def main():
     """主程序逻辑"""
     while True:
         show_menu()
-        choice = input("请选择功能（输入数字0-2）：").strip()
+        choice = input("请选择功能（输入数字0-3）：").strip()
         
         if choice == "1":
             # 批量重命名功能
@@ -70,6 +71,28 @@ def main():
                 print("❌ 宽度/高度/进程数必须是数字！")
             input("\n缩放完成，按回车键返回菜单...")
         
+        elif choice == "3":
+            # 批量缩放+补边功能
+            print("\n----- 批量缩放+补边功能 -----")
+            folder = input("请粘贴图片文件夹完整路径：").strip()
+            if not os.path.isdir(folder):
+                print("❌ 文件夹路径无效，请重新选择！")
+                input("按回车键返回菜单...")
+                continue
+            
+            try:
+                width = int(input("请输入目标宽度：").strip())
+                height = int(input("请输入目标高度：").strip())
+                bg = input("背景颜色（直接回车=白色，输入t=透明）：").strip().lower()
+                bg_color = "transparent" if bg == "t" else "white"
+                workers = input("并行进程数（直接回车=8）：").strip()
+                workers_num = int(workers) if workers else 8
+                
+                batch_scale_and_pad_images(folder, width, height, bg_color, workers_num)
+            except ValueError:
+                print("❌ 宽度/高度/进程数必须是数字！")
+            input("\n缩放补边完成，按回车键返回菜单...")
+        
         elif choice == "0":
             # 退出程序
             print("\n👋 感谢使用，程序已退出！")
@@ -77,7 +100,7 @@ def main():
         
         else:
             # 无效选择
-            print(f"\n❌ 无效选择：{choice}，请输入0-2之间的数字！")
+            print(f"\n❌ 无效选择：{choice}，请输入0-3之间的数字！")
             input("按回车键返回菜单...")
 
 if __name__ == "__main__":
