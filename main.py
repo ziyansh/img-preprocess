@@ -9,7 +9,7 @@ import subprocess
 # 所以我们直接导入，去掉“文件存在性检查”的逻辑
 from rename import batch_rename
 from resize import batch_scale_images, batch_scale_and_pad_images
-from exif_extract import extract_sd_parameters, format_sd_parameters
+from exif_extract import extract_sd_parameters, format_sd_parameters, strip_exif
 
 def clear_screen():
     """清空终端屏幕，适配不同系统"""
@@ -20,6 +20,7 @@ def show_menu():
     clear_screen()
     print("=" * 40)
     print("         批量文件处理工具主程序")
+    print("                     版本v1.2.2")
     print("=" * 40)
     print("【1】批量重命名文件（数字序号）")
     print("【2】批量缩放图片（等比例）")
@@ -151,6 +152,7 @@ def main():
                     print("【1】返回主菜单")
                     print("【2】复制到剪贴板")
                     print("【3】保存为同名的 .txt 文件")
+                    print("【4】复制文件并清除 EXIF")
                     print("-" * 30)
                     sub_choice = input("请选择操作：").strip()
                     if sub_choice == "1":
@@ -172,6 +174,14 @@ def main():
                             print(f"✅ 已保存到：{txt_path}")
                         except Exception as e:
                             print(f"❌ 保存失败：{e}")
+                    elif sub_choice == "4":
+                        # 复制文件并清除 EXIF
+                        base, ext = os.path.splitext(path)
+                        out_path = f"{base}_EXIFclr{ext}"
+                        if strip_exif(path, out_path):
+                            print(f"✅ 已生成（EXIF 已清除）：{out_path}")
+                        else:
+                            print("❌ 清除 EXIF 失败！")
                     else:
                         # 检查子菜单输入是否为图片文件路径
                         sub_path = sub_choice.strip("\"'")

@@ -6,6 +6,7 @@ Stable Diffusion 图片生成参数提取模块
 
 import os
 import sys
+import shutil
 from PIL import Image
 from PIL.ExifTags import TAGS as EXIF_TAGS
 
@@ -85,6 +86,32 @@ def format_sd_parameters(params, fmt):
     lines.append(params)
     lines.append("=" * 50)
     return "\n".join(lines)
+
+
+def strip_exif(image_path, output_path):
+    """
+    复制图片并清除所有 EXIF / 文本元数据
+
+    参数:
+        image_path: 源图片路径
+        output_path: 输出的新文件路径
+
+    返回:
+        True 成功 / False 失败
+    """
+    try:
+        # 先复制文件
+        shutil.copy2(image_path, output_path)
+        # 打开副本重新保存以剥离元数据
+        img = Image.open(output_path)
+        ext = os.path.splitext(output_path)[1].lower()
+        if ext in (".jpg", ".jpeg"):
+            img.save(output_path, exif=b"")
+        else:
+            img.save(output_path)
+        return True
+    except Exception:
+        return False
 
 
 def main_cli():
