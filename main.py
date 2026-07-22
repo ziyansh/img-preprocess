@@ -7,6 +7,7 @@ import subprocess
 
 # 关键：PyInstaller 打包后，所有模块都在 exe 内部，不需要再检查外部文件
 # 所以我们直接导入，去掉“文件存在性检查”的逻辑
+from rename import batch_rename
 from resize import batch_scale_images, batch_scale_and_pad_images, single_scale_image, single_scale_and_pad_image
 from exif_extract import extract_sd_parameters, format_sd_parameters, strip_exif
 
@@ -19,7 +20,7 @@ def show_menu():
     clear_screen()
     print("=" * 40)
     print("         批量文件处理工具主程序")
-    print("                     版本v1.2.3")
+    print("                     版本v1.2.3 Hotfix1")
     print("=" * 40)
     print("【1】批量重命名文件（数字序号）")
     print("【2】批量缩放图片（等比例）")
