@@ -145,6 +145,11 @@ python resize.py /path/to/images 1024 1536
 
 ## 更新说明
 
+### v1.2.3
+
+- **功能 2/3 支持单文件处理** — 输入路径既可以是文件夹（批量处理），也可以是单张图片文件（仅处理该文件），输出到文件所在目录的子文件夹中
+- **新增函数** `single_scale_image()` 和 `single_scale_and_pad_image()` — 在 `resize.py` 中添加单文件处理函数
+
 ### v1.2.2
 
 - **新增子菜单选项 4：复制文件并清除 EXIF** — 在提取 SD 参数后，可选择生成 `_EXIFclr` 后缀的副本，该副本已清除所有 EXIF / 文本元数据（PNG tEXt、JPEG EXIF 等）

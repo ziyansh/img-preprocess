@@ -7,8 +7,7 @@ import subprocess
 
 # 关键：PyInstaller 打包后，所有模块都在 exe 内部，不需要再检查外部文件
 # 所以我们直接导入，去掉“文件存在性检查”的逻辑
-from rename import batch_rename
-from resize import batch_scale_images, batch_scale_and_pad_images
+from resize import batch_scale_images, batch_scale_and_pad_images, single_scale_image, single_scale_and_pad_image
 from exif_extract import extract_sd_parameters, format_sd_parameters, strip_exif
 
 def clear_screen():
@@ -20,7 +19,7 @@ def show_menu():
     clear_screen()
     print("=" * 40)
     print("         批量文件处理工具主程序")
-    print("                     版本v1.2.2")
+    print("                     版本v1.2.3")
     print("=" * 40)
     print("【1】批量重命名文件（数字序号）")
     print("【2】批量缩放图片（等比例）")
@@ -85,29 +84,32 @@ def main():
         elif choice == "2":
             # 批量图片缩放功能
             print("\n----- 批量图片缩放功能 -----")
-            folder = input("请粘贴图片文件夹完整路径：").strip()
-            if not os.path.isdir(folder):
-                print("❌ 文件夹路径无效，请重新选择！")
+            path = input("请粘贴图片文件夹或图片文件完整路径：").strip().strip("\"'")
+            if not os.path.exists(path):
+                print("❌ 路径无效，请重新选择！")
                 input("按回车键返回菜单...")
                 continue
             
             try:
                 width = int(input("请输入目标宽度：").strip())
                 height = int(input("请输入目标高度：").strip())
-                workers = input("并行进程数（直接回车=8）：").strip()
-                workers_num = int(workers) if workers else 8
                 
-                batch_scale_images(folder, width, height, workers_num)
+                if os.path.isdir(path):
+                    workers = input("并行进程数（直接回车=8）：").strip()
+                    workers_num = int(workers) if workers else 8
+                    batch_scale_images(path, width, height, workers_num)
+                else:
+                    single_scale_image(path, width, height)
             except ValueError:
-                print("❌ 宽度/高度/进程数必须是数字！")
+                print("❌ 宽度/高度必须是数字！")
             input("\n缩放完成，按回车键返回菜单...")
         
         elif choice == "3":
             # 批量缩放+补边功能
             print("\n----- 批量缩放+补边功能 -----")
-            folder = input("请粘贴图片文件夹完整路径：").strip()
-            if not os.path.isdir(folder):
-                print("❌ 文件夹路径无效，请重新选择！")
+            path = input("请粘贴图片文件夹或图片文件完整路径：").strip().strip("\"'")
+            if not os.path.exists(path):
+                print("❌ 路径无效，请重新选择！")
                 input("按回车键返回菜单...")
                 continue
             
@@ -116,12 +118,15 @@ def main():
                 height = int(input("请输入目标高度：").strip())
                 bg = input("背景颜色（直接回车=白色，输入t=透明）：").strip().lower()
                 bg_color = "transparent" if bg == "t" else "white"
-                workers = input("并行进程数（直接回车=8）：").strip()
-                workers_num = int(workers) if workers else 8
                 
-                batch_scale_and_pad_images(folder, width, height, bg_color, workers_num)
+                if os.path.isdir(path):
+                    workers = input("并行进程数（直接回车=8）：").strip()
+                    workers_num = int(workers) if workers else 8
+                    batch_scale_and_pad_images(path, width, height, bg_color, workers_num)
+                else:
+                    single_scale_and_pad_image(path, width, height, bg_color)
             except ValueError:
-                print("❌ 宽度/高度/进程数必须是数字！")
+                print("❌ 宽度/高度必须是数字！")
             input("\n缩放补边完成，按回车键返回菜单...")
 
         elif choice == "4":

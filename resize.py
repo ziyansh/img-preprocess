@@ -104,6 +104,46 @@ def batch_scale_and_pad_images(input_dir=".", target_width=512, target_height=51
     print(f"\n全部处理完成！输出目录：{output_dir}")
 
 
+def single_scale_image(file_path, target_width=512, target_height=512):
+    """
+    处理单张图片的等比例缩放
+
+    参数:
+        file_path: 图片文件路径
+        target_width: 目标宽度
+        target_height: 目标高度
+    """
+    file_dir = os.path.dirname(file_path)
+    if not file_dir:
+        file_dir = "."
+    output_dir = os.path.join(file_dir, f"resized_{target_width}x{target_height}")
+    if not os.path.exists(output_dir):
+        os.makedirs(output_dir)
+    _single_proc((file_path, output_dir, target_width, target_height))
+    print(f"\n处理完成！输出目录：{output_dir}")
+
+
+def single_scale_and_pad_image(file_path, target_width=512, target_height=512, bg_color="white"):
+    """
+    处理单张图片的等比例缩放+补边
+
+    参数:
+        file_path: 图片文件路径
+        target_width: 目标宽度
+        target_height: 目标高度
+        bg_color: 背景颜色 ("white" 或 "transparent")
+    """
+    file_dir = os.path.dirname(file_path)
+    if not file_dir:
+        file_dir = "."
+    bg_label = "白底" if bg_color == "white" else "透明底"
+    output_dir = os.path.join(file_dir, f"padded_{target_width}x{target_height}_{bg_label}")
+    if not os.path.exists(output_dir):
+        os.makedirs(output_dir)
+    _single_proc_pad((file_path, output_dir, target_width, target_height, bg_color))
+    print(f"\n处理完成！输出目录：{output_dir}")
+
+
 if __name__ == "__main__":
     import sys
     if len(sys.argv) >= 4:
